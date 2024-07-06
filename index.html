@@ -284,11 +284,14 @@
         let currentConversation;
         let currentQuestionIndex;
         let saleChance;
+        let askedQuestions;
 
         function startGame() {
             score = 0;
             lostSales = 0;
             updateScore();
+            document.getElementById('restart').style.display = 'none';
+            document.getElementById('result').innerHTML = '';
             nextSale();
         }
 
@@ -300,11 +303,14 @@
 
             saleChance = 0;
             currentQuestionIndex = 0;
+            askedQuestions = [];
             generateScene();
-            askQuestion();
-
+            
             document.getElementById('next-sale').style.display = 'none';
+            document.getElementById('restart').style.display = 'none';
             document.getElementById('result').innerHTML = '';
+            
+            askQuestion();
         }
 
         function generateScene() {
@@ -330,7 +336,15 @@
                 return;
             }
 
-            currentConversation = conversations[Math.floor(Math.random() * conversations.length)];
+            let availableQuestions = conversations.filter(conv => !askedQuestions.includes(conv.question));
+            
+            if (availableQuestions.length === 0) {
+                availableQuestions = conversations;
+            }
+
+            currentConversation = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+            askedQuestions.push(currentConversation.question);
+
             const questionElement = document.getElementById('question');
             const answersElement = document.getElementById('answers');
 
